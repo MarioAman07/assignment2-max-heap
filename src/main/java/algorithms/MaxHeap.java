@@ -8,7 +8,7 @@ public class MaxHeap {
     private int size;
     private final int capacity;
 
-    // Метрики
+    // Метрики для оптимизации
     private int comparisons = 0;
     private int swaps = 0;
     private int arrayAccesses = 0;
@@ -68,7 +68,6 @@ public class MaxHeap {
         return size;
     }
 
-    // Оптимизированный heapifyUp без лишних swap
     private void heapifyUp(int i) {
         int value = heap[i];
         int parent = (i - 1) / 2;
@@ -78,13 +77,12 @@ public class MaxHeap {
             arrayAccesses += 2; // чтение и запись
             i = parent;
             parent = (i - 1) / 2;
-            swaps++; // логически перемещение
+            swaps++;
         }
         heap[i] = value;
         arrayAccesses++;
     }
 
-    // Оптимизированный heapifyDown без лишних swap
     private void heapifyDown(int i) {
         int value = heap[i];
         int largest;
@@ -122,10 +120,17 @@ public class MaxHeap {
         }
     }
 
+    private void swap(int i, int j) {
+        int temp = heap[i];
+        heap[i] = heap[j];
+        heap[j] = temp;
+    }
+
     public int[] getHeapArray() {
         return Arrays.copyOf(heap, size);
     }
 
+    // Метрики для анализа производительности
     public int getComparisons() {
         return comparisons;
     }
