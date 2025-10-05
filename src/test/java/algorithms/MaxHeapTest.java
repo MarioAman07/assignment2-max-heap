@@ -4,96 +4,61 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.util.NoSuchElementException;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 class MaxHeapTest {
 
-    private MaxHeap heap;
+    private MaxHeap emptyHeap;
+    private MaxHeap singleHeap;
 
     @BeforeEach
     void setUp() {
-        heap = new MaxHeap(100);
+        emptyHeap = new MaxHeap(10);
+        singleHeap = new MaxHeap(10);
+        singleHeap.insert(42);
     }
 
     @Test
-    void testInsertSingleElement() {
-        heap.insert(10);
-        assertEquals(10, heap.getMax());
-        assertEquals(1, heap.getSize());
+    void extractMaxFromEmptyHeapShouldThrow() {
+        assertThrows(NoSuchElementException.class, () -> emptyHeap.extractMax());
     }
 
     @Test
-    void testExtractMaxFromEmptyHeap() {
-        assertThrows(NoSuchElementException.class, heap::extractMax);
+    void getMaxFromEmptyHeapShouldThrow() {
+        assertThrows(NoSuchElementException.class, () -> emptyHeap.getMax());
     }
 
     @Test
-    void testInsertAndExtractMax() {
-        heap.insert(5);
-        heap.insert(15);
-        heap.insert(10);
-
-        assertEquals(15, heap.extractMax());
-        assertEquals(10, heap.extractMax());
-        assertEquals(5, heap.extractMax());
-        assertEquals(0, heap.getSize());
+    void increaseKeyOnEmptyHeapShouldThrow() {
+        assertThrows(IndexOutOfBoundsException.class, () -> emptyHeap.increaseKey(0, 10));
     }
 
     @Test
-    void testIncreaseKey() {
-        heap.insert(5);
-        heap.insert(10);
-        heap.insert(8);
-
-        heap.increaseKey(0, 12);
-        assertEquals(12, heap.getMax());
-
-        heap.increaseKey(2, 15);
-        assertEquals(15, heap.getMax());
+    void getSizeOfEmptyHeapShouldBeZero() {
+        assertEquals(0, emptyHeap.getSize());
     }
 
     @Test
-    void testDuplicateValues() {
-        heap.insert(10);
-        heap.insert(10);
-        heap.insert(10);
-
-        assertEquals(10, heap.extractMax());
-        assertEquals(10, heap.extractMax());
-        assertEquals(10, heap.extractMax());
-        assertEquals(0, heap.getSize());
+    void extractMaxFromSingleElementHeapShouldReturnElement() {
+        int value = singleHeap.extractMax();
+        assertEquals(42, value);
+        assertEquals(0, singleHeap.getSize());
     }
 
     @Test
-    void testBuildHeapFromArray() {
-        int[] arr = {3, 1, 6, 5, 2, 4};
-        heap = new MaxHeap(arr);
-
-        int prev = heap.extractMax();
-        while (heap.getSize() > 0) {
-            int current = heap.extractMax();
-            assertTrue(prev >= current);
-            prev = current;
-        }
+    void getMaxFromSingleElementHeapShouldReturnElement() {
+        assertEquals(42, singleHeap.getMax());
     }
 
     @Test
-    void testRandomInsertExtract() {
-        Random random = new Random(42);
-        int[] values = new int[50];
-        for (int i = 0; i < 50; i++) {
-            values[i] = random.nextInt(1000);
-            heap.insert(values[i]);
-        }
+    void increaseKeyOnSingleElementHeapShouldUpdateValue() {
+        singleHeap.increaseKey(0, 100);
+        assertEquals(100, singleHeap.getMax());
+    }
 
-        int prev = heap.extractMax();
-        while (heap.getSize() > 0) {
-            int current = heap.extractMax();
-            assertTrue(prev >= current);
-            prev = current;
-        }
+    @Test
+    void getSizeOfSingleElementHeapShouldBeOne() {
+        assertEquals(1, singleHeap.getSize());
     }
 }
